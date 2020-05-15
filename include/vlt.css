@@ -1,0 +1,54 @@
+.vlt-test .vlt-start {
+	padding:0 10px;
+	background:#ddd;
+	border-radius:20px;
+	display:inline-block;
+	cursor:pointer;
+	width:250px;
+	text-align:center;
+	height:110px;
+	position:relative;
+	line-height:110px;
+	font-size:40px;
+}
+
+.vlt-test .vlt-title,
+.vlt-test .vlt-results div ,
+.vlt-test .vlt-conclusion div {
+	margin-top:10px;
+}
+
+.vlt-test .vlt-conclusion {
+	border-top:1px solid #555;
+	margin-top:10px;
+}
+
+.vlt-test .vlt-start img {
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	margin:auto;
+}
+
+#vlt-test-img {
+	width:1px;
+	height:1px;
+	position:absolute;
+	right:0;
+	bottom:0;
+}
+
+.vlt-test .vlt-results div,
+.vlt-test .vlt-conclusion div {
+	line-height:20px;
+}
+
+.vlt-test .vlt-results div img {
+	vertical-align:middle;
+	display:inline-block;
+	border: 1px solid #b0b0b0;
+	padding: 1px;
+	margin-bottom:2px;
+}

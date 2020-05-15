@@ -1,0 +1,66 @@
+table.form-table .description {
+	vertical-align:middle;
+	display:inline;
+	margin-left:10px;
+}
+
+table.form-table tr.help th,
+table.form-table tr.help td {
+	margin-top:0;
+	padding-top:0;
+}
+
+p.submit a {
+	margin-left:10px;
+}
+
+table.form-table tr.help th,
+table.form-table tr.help td {
+	margin-top:0;
+	padding-top:0;
+}
+
+
+table.form-table  b {
+	width:110px;
+	display:inline-block;
+}
+
+table.form-table  .description b {
+	display:inline;
+}
+
+
+table.form-table td {
+}
+
+table.form-table th {
+	vertical-align:middle;
+}
+
+table.form-table img {
+	vertical-align:middle;
+	margin-right:10px;
+}
+	
+table.form-table input[type="text"] {
+	width:200px;
+}
+
+table.form-table input {
+	display:inline-block;
+	vertical-align:middle;
+}
+
+table.form-table td {
+	padding-right:10px;
+}
+
+table.form-table textarea {
+	display:block;
+	vertical-align:middle;
+	width:400px;
+	height:100px;
+	margin-right:10px;
+}
+
