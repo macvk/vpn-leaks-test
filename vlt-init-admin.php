@@ -62,7 +62,7 @@ function vlt_activation() {
 		) '.$wpdb->get_charset_collate().';';
 		
 	$wpdb->query($sql);
-	
+
 	register_uninstall_hook( VLT_FILE, 'vlt_uninstall' );
 }
 
@@ -72,6 +72,7 @@ function vlt_uninstall() {
 	$sql = 'DROP TABLE '.$wpdb->prefix.'vlt';
 	
 	$wpdb->query($sql);
+	
 }
 
 
