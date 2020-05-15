@@ -12,7 +12,7 @@ More information about the tests is available here https://bash.ws/.
 
 1. Download the plugin (https://github.com/macvk/vpn-leaks-test/archive/master.zip)
 2. Install the plugin on Wordpress website
-3. Use WP Admin panel to add the tests to the site backend and to configure the tests
-4. Use shortcode [vlt id=TEST_ID] to integrate the tests into the site frontend
+3. Use WP Admin panel to add the tests to the website backend and to configure the tests
+4. Use shortcode [vlt id=TEST_ID] to integrate the tests into the website frontend
 
 
