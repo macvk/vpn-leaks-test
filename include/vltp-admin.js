@@ -1,6 +1,6 @@
 jQuery(document).ready( function($) {
 
-	jQuery('input#vlt_progress_image_manager').click(function(e) {
+	jQuery('input#vltp_progress_image_manager').click(function(e) {
 
 		e.preventDefault();
 		var image_frame;
@@ -29,7 +29,7 @@ jQuery(document).ready( function($) {
 				my_index++;
 			});
 			var ids = gallery_ids.join(",");
-			jQuery('input#vlt_progress_image').val(ids);
+			jQuery('input#vltp_progress_image').val(ids);
 			Refresh_Image(ids);
 		});
 
@@ -37,7 +37,7 @@ jQuery(document).ready( function($) {
                         // On open, get the id from the hidden input
                         // and select the appropiate images in the media manager
 			var selection =  image_frame.state().get('selection');
-			var ids = jQuery('input#vlt_progress_image').val().split(',');
+			var ids = jQuery('input#vltp_progress_image').val().split(',');
 			ids.forEach(function(id) {
 				var attachment = wp.media.attachment(id);
 				attachment.fetch();
@@ -54,7 +54,7 @@ jQuery(document).ready( function($) {
 
 function Refresh_Image(the_id) {
         var data = {
-		action: 'vlt_get_progress_image',
+		action: 'vltp_get_progress_image',
 		id: the_id
         };
 
@@ -65,11 +65,11 @@ function Refresh_Image(the_id) {
 		}
 
 		if (response.data.image) {
-			jQuery('#vlt_progress_image_preview').replaceWith( response.data.image );
+			jQuery('#vltp_progress_image_preview').replaceWith( response.data.image );
 		}
 		else {
 			
-			jQuery('#vlt_progress_image_preview').replaceWith( vlt_settings.default_progress_image );
+			jQuery('#vltp_progress_image_preview').replaceWith( vltp_settings.default_progress_image );
 		}
 	});
 }

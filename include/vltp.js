@@ -2,7 +2,7 @@
 var vpn_test_started = false;
 
 jQuery(document).ready(function(){
-	jQuery('.vlt-test .vlt-start').click(function(){
+	jQuery('.vltp-test .vltp-start').click(function(){
 		var o = jQuery(this);
 		var test_type = o.attr('data-type');
 		
@@ -23,14 +23,14 @@ jQuery(document).ready(function(){
 		var sav_button = o.html();
 		
 		image = new Image();
-		image.src = vlt_settings.vlt_progress_image;
+		image.src = vltp_settings.vltp_progress_image;
 		
 		image.onload = function() {
-			vlt_test(o,sav_button,test_type);
+			vltp_test(o,sav_button,test_type);
 		};
 	
 		image.onerror = function() {
-			vlt_test(o,sav_button,test_type);
+			vltp_test(o,sav_button,test_type);
 		};
 		            
 		o.html(image);
@@ -39,29 +39,29 @@ jQuery(document).ready(function(){
 });
 
 
-function vlt_test(o,sav_button,test_type) {
+function vltp_test(o,sav_button,test_type) {
 	if (test_type.localeCompare('dns') == 0) {
-		vlt_test_dns(o,sav_button,test_type);
+		vltp_test_dns(o,sav_button,test_type);
 	}
 
 	if (test_type.localeCompare('email') == 0) {
-		o.parent().append('<div class="vlt-info">'+vlt_settings.vlt_email_message+'</div>');
-		vlt_test_email_check(o,sav_button,test_type);
+		o.parent().append('<div class="vltp-info">'+vltp_settings.vltp_email_message+'</div>');
+		vltp_test_email_check(o,sav_button,test_type);
 	}
 
 	if (test_type.localeCompare('webrtc') == 0) {
-		vlt_test_webrtc(o,sav_button,test_type);
+		vltp_test_webrtc(o,sav_button,test_type);
 	}
 }
 
-function vlt_test_email_check(o,sav_button,test_type) {
+function vltp_test_email_check(o,sav_button,test_type) {
 
         var data = {
-		action: 'vlt_test_email_check',
-		vlt_test_id: vlt_settings.vlt_test_id
+		action: 'vltp_test_email_check',
+		vltp_test_id: vltp_settings.vltp_test_id
         };
 
-	jQuery.ajax({url:vlt_settings.vlt_ajax_url, type:"POST", data:data, complete:function(xhr) {
+	jQuery.ajax({url:vltp_settings.vltp_ajax_url, type:"POST", data:data, complete:function(xhr) {
 		var done = false;
 		try {
 			j = JSON.parse(xhr.responseText);
@@ -71,29 +71,29 @@ function vlt_test_email_check(o,sav_button,test_type) {
 		}
 		
 		if (done) {
-			document.location = vlt_settings.vlt_url;
+			document.location = vltp_settings.vltp_url;
 		}
 		else {
 			setTimeout(function(){
-				vlt_test_email_check(o,sav_button,test_type);
+				vltp_test_email_check(o,sav_button,test_type);
 			},1000);
 		}
 	}});
 }
 
-function vlt_test_dns(o,sav_button,test_type) {
+function vltp_test_dns(o,sav_button,test_type) {
 
 	var image_count = 20;
 	var images = [];
 	var i;
-	var leak_id = vlt_settings.vlt_test_id;
+	var leak_id = vltp_settings.vltp_test_id;
 
 	for (i=0;i<image_count;i++)
 	{
 		images.push(new Image());
 	}
 	
-	div = jQuery('<div id="vlt-image-test"></div>');
+	div = jQuery('<div id="vltp-image-test"></div>');
 	jQuery('body').append(div);
 	
 	for (i=0;i<image_count;i++) {
@@ -102,20 +102,20 @@ function vlt_test_dns(o,sav_button,test_type) {
 	}
 	
 	images[image_count-1].onload = function() {
-		document.location = vlt_settings.vlt_url;
+		document.location = vltp_settings.vltp_url;
 	};
 	
 	images[image_count-1].onerror = function() {
-		document.location = vlt_settings.vlt_url;
+		document.location = vltp_settings.vltp_url;
 	};
 	
 }
 
-function vlt_test_webrtc(o,sav_button,test_type) {
+function vltp_test_webrtc(o,sav_button,test_type) {
 
 	var leak_id;
 	var ips = new Array();
-	leak_id = vlt_settings.vlt_test_id;
+	leak_id = vltp_settings.vltp_test_id;
 	
         //insert IP addresses into the page
         try {
@@ -135,12 +135,12 @@ function vlt_test_webrtc(o,sav_button,test_type) {
 	setTimeout(function(){
 
 	        var data = {
-			action: 'vlt_test_webrtc',
-			vlt_test_id: vlt_settings.vlt_test_id,
+			action: 'vltp_test_webrtc',
+			vltp_test_id: vltp_settings.vltp_test_id,
 			ips: ips
 	        };
 	
-		jQuery.ajax({url:vlt_settings.vlt_ajax_url, type:"POST", data:data, complete:function(xhr) {
+		jQuery.ajax({url:vltp_settings.vltp_ajax_url, type:"POST", data:data, complete:function(xhr) {
 			var done = false;
 			try {
 				j = JSON.parse(xhr.responseText);
@@ -149,7 +149,7 @@ function vlt_test_webrtc(o,sav_button,test_type) {
 			catch (e) {
 			}
 		
-			document.location = vlt_settings.vlt_url;
+			document.location = vltp_settings.vltp_url;
 		}});
 
 	}, 1000);

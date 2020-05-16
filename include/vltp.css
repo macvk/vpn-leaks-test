@@ -1,4 +1,4 @@
-.vlt-test .vlt-start {
+.vltp-test .vltp-start {
 	padding:0 10px;
 	background:#ddd;
 	border-radius:20px;
@@ -12,18 +12,18 @@
 	font-size:40px;
 }
 
-.vlt-test .vlt-title,
-.vlt-test .vlt-results div ,
-.vlt-test .vlt-conclusion div {
+.vltp-test .vltp-title,
+.vltp-test .vltp-results div ,
+.vltp-test .vltp-conclusion div {
 	margin-top:10px;
 }
 
-.vlt-test .vlt-conclusion {
+.vltp-test .vltp-conclusion {
 	border-top:1px solid #555;
 	margin-top:10px;
 }
 
-.vlt-test .vlt-start img {
+.vltp-test .vltp-start img {
 	position:absolute;
 	left:0;
 	right:0;
@@ -32,7 +32,7 @@
 	margin:auto;
 }
 
-#vlt-test-img {
+#vltp-test-img {
 	width:1px;
 	height:1px;
 	position:absolute;
@@ -40,12 +40,12 @@
 	bottom:0;
 }
 
-.vlt-test .vlt-results div,
-.vlt-test .vlt-conclusion div {
+.vltp-test .vltp-results div,
+.vltp-test .vltp-conclusion div {
 	line-height:20px;
 }
 
-.vlt-test .vlt-results div img {
+.vltp-test .vltp-results div img {
 	vertical-align:middle;
 	display:inline-block;
 	border: 1px solid #b0b0b0;

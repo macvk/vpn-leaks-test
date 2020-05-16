@@ -1,35 +1,34 @@
 <?php
 
-function vlt_admin_help()
+function vltp_admin_help()
 {
 	$current_screen = get_current_screen();
 	
 	// Screen Content
-	if ( !current_user_can( 'manage_options' ) ) 
-	{
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
 	}
-
-	if ( !isset( $_GET['page'] ) || $_GET['page'] != 'vlt-admin-page' ) 
-	{
+	
+	if ( !isset( $_GET['page'] ) || $_GET['page'] != 'vltp-admin-page' ) {
 		return;
 	}
 
 	//setup page
 	$current_screen->add_help_tab(
 		array(
-			'id'		=> 'vlt-admin-page-help-quick',
+			'id'		=> 'vltp-admin-page-help-quick',
 			'title'		=> __( 'Quick start' , 'vpn-leaks-test'),
 			'content'	=>
 				'<p><strong>' . __( 'Quick setup guide' , 'vpn-leaks-test') . '</strong></p>' .
 				'<p>' . __( '1. Click "<b>Add New VPN test</b>" and choose the test you want to add. Fill in the form and save the test.' , 'vpn-leaks-test') . '</p>' .
-				'<p>' . __( '2. Create the page using Wordpress common interface and Copy and paste test shortcode into the page content. Shortcode format: <b style="padding:2px 10px 3px;background:#b6f7b6">[vlt id=YOUR_TEST_ID]</b>' , 'vpn-leaks-test') . '</p>'.
+				'<p>' . __( '2. Create the page using Wordpress common interface and Copy and paste test shortcode into the page content. Shortcode format: <b style="padding:2px 10px 3px;background:#b6f7b6">[vltp id=YOUR_TEST_ID]</b>' , 'vpn-leaks-test') . '</p>'.
 				'<p>' . __( '3. All the tests use the same interface. It consists from the <b>Start button</b> and the test results. The test result is displayed as a table of IPs and conclusion message.' , 'vpn-leaks-test') . '</p>',
 		)
 	);
+
 	$current_screen->add_help_tab(
 		array(
-			'id'		=> 'vlt-admin-page-help-dns',
+			'id'		=> 'vltp-admin-page-help-dns',
 			'title'		=> __( 'DNS leak test' , 'vpn-leaks-test'),
 			'content'	=>
 				'<p><strong>' . __( 'Setup DNS leak test' , 'vpn-leaks-test') . '</strong></p>' .
@@ -38,9 +37,10 @@ function vlt_admin_help()
 				'<p>' . __( '3. The Dns leak test is very simple to use. To start the test user needs to click the "Start test" button. Dns queries will be generated and send to the specified domain. The IPs from which was DNS queries received will be displayed as a result. More information can be found <a target=_blank href="https://bash.ws/dnsleak">here</a>' , 'vpn-leaks-test') . '</p>',
 		)
 	);
+
 	$current_screen->add_help_tab(
 		array(
-			'id'		=> 'vlt-admin-page-help-email',
+			'id'		=> 'vltp-admin-page-help-email',
 			'title'		=> __( 'Email leak test' , 'vpn-leaks-test'),
 			'content'	=>
 				'<p><strong>' . __( 'Setup Email IP leak test' , 'vpn-leaks-test') . '</strong></p>' .
@@ -49,9 +49,10 @@ function vlt_admin_help()
 				'<p>' . __( '3. The Email leak test requires the user to send an email to the specified email address. The email header will be analyzed for IP leaks. More information is available <a target=_blank href="https://bash.ws/email-leak-test">here</a>.' , 'vpn-leaks-test') . '</p>',
 		)
 	);
+
 	$current_screen->add_help_tab(
 		array(
-			'id'		=> 'vlt-admin-page-help-webrtc',
+			'id'		=> 'vltp-admin-page-help-webrtc',
 			'title'		=> __( 'WebRTC leak test' , 'vpn-leaks-test'),
 			'content'	=>
 				'<p><strong>' . __( 'Setup WebRTC leak test' , 'vpn-leaks-test') . '</strong></p>' .

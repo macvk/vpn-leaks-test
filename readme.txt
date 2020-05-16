@@ -16,12 +16,14 @@ The plugin contains the leaks test package:
 
 You can integrate these tests into your website.
 
+The VPN leaks test
+
 == Installation ==
 
 1. Install and activate the plugin through the 'Plugins' menu in WordPress.
 2. Go to Settings > VPN leaks test.
 3. Perform the necessary settings and press the Save button.
-4. Use shortcode [vlt id=TEST_ID] to integrate the test into frontend of the website.
+4. Use shortcode [vltp id=TEST_ID] to integrate the test into frontend of the website.
 
 == Changelog ==
 
