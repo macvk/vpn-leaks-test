@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Process the [vltp] shortcode.
+ *
+ * @param array $attrs {
+ *     Shortcode attributes. 
+ *
+ *     @type int $id  The VPN test ID
+ * }
+ *
+ * @return string Content with shortcode parsed
+*/
 function vltp_shortcode($attrs) {
 
 	global $wpdb;
@@ -13,7 +24,8 @@ function vltp_shortcode($attrs) {
 	}	
 
 	$id = intval( $id );
-
+	
+	// Retrives the Test configuration
 	$row = $wpdb->get_row( 'SELECT * FROM '.$wpdb->prefix.'vltp WHERE vltp_id='.$id, ARRAY_A );
 	
 	if ( !$row ) {
@@ -26,6 +38,7 @@ function vltp_shortcode($attrs) {
 	
 	$content = '';	
 	
+	// 
 	$options = @unserialize( stripslashes( $row['vltp_options'] ) );
 	
 	$row['vltp_progress_image'] = isset( $options['vltp_progress_image'] ) ? stripslashes( $options['vltp_progress_image'] ) : '';
@@ -48,7 +61,6 @@ function vltp_shortcode($attrs) {
 		$image = plugin_dir_url( __FILE__ ).'include/ajax-loader.gif';
 	}
 	
-
 	global $wp;
 	
 	$script_array = array( );
@@ -60,7 +72,7 @@ function vltp_shortcode($attrs) {
 	
 	if ( $row['vltp_type'] == 'email' ) {
 		$m = $script_array['vltp_test_id'].'@bash.ws';
-		$script_array['vltp_email_message'] = __('Please send an email to <a href="mailto:'.$m.'">'.$m.'</a>. The email subject and body doesn\'t matter. Do not refresh the page.','vpn-leaks-test');
+		$script_array['vltp_email_message'] = sprintf( __('Please send an email to <a href="mailto:%s">%s</a>. The email subject and body doesn\'t matter. Do not refresh the page.', 'vpn-leaks-test') ,$m, $m );
 	}
 	
 	wp_localize_script( 'vltp-js', 'vltp_settings', $script_array );
@@ -69,7 +81,7 @@ function vltp_shortcode($attrs) {
 	$content.= '<div class="vltp-start" data-type="'.$row['vltp_type'].'">'.$row['vltp_start'].'</div>';
 
 	if ( isset( $_REQUEST['vltp_test_id'] ) ) {
-
+	
 		$content .= vltp_test_result( $row );
 	}
 
@@ -79,6 +91,19 @@ function vltp_shortcode($attrs) {
 
 }
 
+/**
+ * Receives and displays the results of testing from 3rd party service bash.ws
+ * 
+ * @param array $row {
+ *     The VPN test configuration
+ *
+ *     @type string $vltp_type        VPN test type
+ *     @type string $vltp_result      Line by line HTML to format the VPN test result
+ *     @type string $vltp_conclusion  Line by line HTML to format the VPN test conclusion
+ * }
+ *
+ * @return string The result of testing
+*/
 function vltp_test_result( $row ) {
 	$content = '';
 	
@@ -100,7 +125,7 @@ function vltp_test_result( $row ) {
 	else {
 		return '';
 	}
-
+	
 	$ip = isset( $_REQUEST['ip'] ) ? $_REQUEST['ip'] : '';
 
 	if (!$ip) {
@@ -115,12 +140,34 @@ function vltp_test_result( $row ) {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
 	}
 
+	if ( !$ip ) {	
+		return '';
+	}
+
 	$data = array('ip' => $ip);
+
+	/**
+	 * Receives JSON object from the 3rd party service bash.ws
+	 *
+	 * @param string $ip The user IP address
+	 *
+	 * @return array $results { 
+	 * 
+	 *     @type string $type         The item type (dns, webrtc, email, ip, conclusion, info)
+	 *     @type string $ip           IP address
+	 *     @type int    $country      Country code of IP address 
+	 *     @type string $country_name Country name of IP address
+	 *     @type string $asn          ASN name of IP address
+	 *
+	 * }
+	 *
+	*/
 	
 	$response = wp_remote_post( esc_url_raw( $url.'?json' ), $data );
 	
 	$results = array();
 	if ( !is_wp_error( $response ) ) {
+	
 		$results = @json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( isset( $results['error'] ) ) {
 			$results = array();
@@ -157,20 +204,20 @@ function vltp_test_result( $row ) {
 		$content .= '<div class="vltp-title">';
 
 		if ( $row['vltp_type'] == 'dns' ) {
-			$content .= 'You use '.$total.' DNS servers';
+			$content .= sprintf( _n('You use %d DNS server', 'You use %d DNS servers', $total, 'vpn-leaks-test'), $total);
 		}
 		else if ( $row['vltp_type'] == 'email' ) {
-			$content .= 'Your email contains '.$total.' IPs';
+			$content .= sprintf( _n('Your email contains %d IP', 'Your email contains %d IPs', $total, 'vpn-leaks-test'), $total );
 		}
 		else if ( $row['vltp_type'] == 'webrtc' ) {
-			$content .= 'WebRTC is able to see '.$total.' IPs';
+			$content .= sprintf( _n( 'WebRTC is able to see %d IP', 'WebRTC is able to see %d IPs', $total, 'vpn-leaks-test' ), $total );
 		}
 
 		$content .= '</div>';
 		$content .= '<div class="vltp-results">';
 
 		foreach ( $results as $k=>$v ) {
-
+		
 			$check_fields = array( 'country', 'country_name', 'ip', 'type');
 		
 			foreach ( $check_fields as $field ) {
@@ -196,6 +243,7 @@ function vltp_test_result( $row ) {
 			}
 			
 			$r = array();
+
 			$r['%country_code'] = $v['country'];
 			$r['%country_name'] = $v['country_name'];
 			$r['%asn'] = $v['asn'];
@@ -203,6 +251,7 @@ function vltp_test_result( $row ) {
 			$r['%flag'] = plugin_dir_url( __FILE__ ).'include/flags/'.$v['country'].'.png';
 			
 			$content .= str_replace( array_keys( $r ), array_values( $r ), $row['vltp_result'] );
+
 		}
 		$content .= '</div>';
 		$content .= '<div class="vltp-conclusion">';
@@ -231,6 +280,11 @@ function vltp_test_result( $row ) {
 	return $content;	
 }
 
+/**
+ * Checks to see if the IP for testing was received and analyzed 
+ *
+ * @return null
+*/
 function vltp_test_webrtc() {
 
 	$ips = isset($_REQUEST['ips']) ? $_REQUEST['ips'] : array();
@@ -248,10 +302,10 @@ function vltp_test_webrtc() {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
 	}
 	
-	$test_id = intval( $_REQUEST['vltp_test_id'] );
-	$data = array( 'ajax' => '1', 'ips'=>$ips, 'ip'=>$ip );
+	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
 	$url = 'https://bash.ws/webrtc-leak-test/test/'.$test_id;
 	
+	$data = array( 'ajax' => '1', 'ips'=>$ips, 'ip'=>$ip );
 	$response = wp_remote_post( esc_url_raw( $url ), $data );
 
 	if ( !is_wp_error( $response ) ) {
@@ -261,13 +315,17 @@ function vltp_test_webrtc() {
 	die();
 }
 
+/**
+ * Checks to see if the email for testing was received and analyzed
+ *
+ * @return null
+*/
 function vltp_test_email_check() {
 
-	$data = array( 'ajax' => '1' );
-
-	$test_id = intval( $_REQUEST['vltp_test_id'] );
+	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
 	$url = 'https://bash.ws/email-leak-test/test/'.$test_id;
 	
+	$data = array( 'ajax' => '1' );
 	$response = wp_remote_post( esc_url_raw( $url ), $data );
 	
 	if ( !is_wp_error( $response ) ) {

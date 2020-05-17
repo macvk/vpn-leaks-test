@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * Show the VPN leaks settings page
+ *
+ * @return null
+ */
 function vltp_admin_page() {
 
-	$add_url = add_query_arg(array( 'page' => 'vltp-admin-page', 'action'=>'add'), admin_url( 'admin.php' ));
-	$edit_url = add_query_arg(array( 'page' => 'vltp-admin-page', 'action'=>'edit', 'id'=>'1'), admin_url( 'admin.php' ));
+	$add_url = add_query_arg( array( 'page' => 'vltp-admin-page', 'action'=>'add'), admin_url( 'admin.php' ) );
+	$edit_url = add_query_arg( array( 'page' => 'vltp-admin-page', 'action'=>'edit', 'id'=>'1'), admin_url( 'admin.php' ) );
 	
 	
 ?>
@@ -13,7 +18,7 @@ function vltp_admin_page() {
 	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 	$test_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
 	
-	if (($action != 'edit' && $action != 'add') || !empty( $_POST[VLTP_NONCE] )) {
+	if ( ( $action != 'edit' && $action != 'add' ) || !empty( $_POST[VLTP_NONCE] ) ) {
 ?>
 		<h1 class="wp-heading-inline"><?php echo __( 'VPN leaks test configuration', 'vpn-leaks-test' ) ?></h1>
 		<a href="<?php echo $add_url; ?>" class="page-title-action">Add New VPN Test</a>
@@ -25,6 +30,7 @@ function vltp_admin_page() {
 		<div class="vltp-admin">
 <?php
 
+	// Save the settings to the database 
 	if ( ! empty( $_POST[VLTP_NONCE] ) ) {
 	
 		global $wpdb;
@@ -33,12 +39,25 @@ function vltp_admin_page() {
 		$row['vltp_type'] = esc_sql($_POST['vltp_type']);
 		
 		$options = array();
-		$options['vltp_progress_image'] = intval( $_POST['vltp_progress_image'] );
+		// The test frontend design customization:
+		// 1. Progress image (gif), by default vpn-leaks-test/include/ajax-loader.gif
+		$options['vltp_progress_image'] = isset( $_POST['vltp_progress_image'] ) ? intval( $_POST['vltp_progress_image'] ) : 0;
+		// 2. The label of "start test" button, by default "Start test"
 		$options['vltp_start'] = isset( $_POST['vltp_start'] ) ? $_POST['vltp_start'] : '';
+		/* 3. Line by line HTML for the test results. The following format characters are available: 
+			%ip - IP address found by the test
+			%country_code - Country code of the IP
+			%country_name - Country name of the IP
+			%asn - Unique number assigned to an autonomous system to which the IP belongs
+			%flag - The full URL to the country flag of the IP (all the flags are here: vpn-leaks-test/include/flags)
+		*/
 		$options['vltp_result'] = isset( $_POST['vltp_result'] ) ? $_POST['vltp_result'] : '';
+		/* 4. Line by line HTML for the conclusion of the tests. The following format characters are available: 
+			%text - the conclusion text
+		*/
 		$options['vltp_conclusion'] = isset( $_POST['vltp_conclusion'] ) ? $_POST['vltp_conclusion'] : '';
 		
-		$row['vltp_options'] = esc_sql(serialize($options));
+		$row['vltp_options'] = esc_sql( serialize( $options ) );
 		
 		if ($test_id) {
 			$wpdb->update( $wpdb->prefix.'vltp', $row, array( 'vltp_id' => $test_id ) );
@@ -72,26 +91,48 @@ function vltp_admin_page() {
 <?php	
 }
 
+/**
+ * Delete the VPN test
+ *
+ * @param int      $id     Test ID
+ *
+ * @return null
+ */
 function vltp_admin_page_delete( $id ) {
 	global $wpdb;
-	$wpdb->delete( $wpdb->prefix.'vlt',array( 'vltp_id'=>$id ) );
+	$wpdb->delete( $wpdb->prefix.'vltp',array( 'vltp_id'=>$id ) );
 	echo '<div class="notice notice-success is-dismissible"><p>';
-	echo __('The VPN test '.intval($id).' deleted successfully', 'vpn-leaks-test');
+	echo sprintf( __( 'The VPN test %d deleted successfully', 'vpn-leaks-test' ), intval($id) );
 	echo '</p></div>';
 }
 
+/**
+ * Shows the notice about updating the VPN test
+ *
+ * @return null
+ */
 function vltp_test_updated() {
 	echo '<div class="notice notice-success is-dismissible"><p>';
-	echo __('The VPN test '.intval($_POST['vltp_id']).' updated successfully', 'vpn-leaks-test');
+	echo sprintf( __( 'The VPN test %d updated successfully', 'vpn-leaks-test'), intval( $_POST['vltp_id'] ) );
 	echo '</p></div>';
 }
 
+/**
+ * Shows the notice about inserting the VPN test
+ *
+ * @return null
+ */
 function vltp_test_inserted() {
 	echo '<div class="notice notice-success is-dismissible"><p>';
 	echo __('The VPN test inserted successfully', 'vpn-leaks-test');
 	echo '</p></div>';
 }
 
+/**
+ * Shows the VPN tests table 
+ *
+ * @return null
+ */
 function vltp_admin_page_list() {
 	global $wpdb;
 
@@ -125,6 +166,13 @@ function vltp_admin_page_list() {
 	
 }
 
+/**
+ * Determines the name of the VPN test type
+ *
+ * @param string $type ID of VPN test type
+ *
+ * @return string      name of the VPN test type 
+ */
 function vltp_test_type_name($type) {
 	$names = array();
 	$names['dns'] = 'DNS Leak Test';
@@ -134,6 +182,13 @@ function vltp_test_type_name($type) {
 	return isset($names[$type]) ? $names[$type] : '';
 }
 
+/**
+ * Shows the edit form 
+ *
+ * @param int $id ID of VPN test
+ *
+ * @return null
+ */
 function vltp_admin_page_edit($id) {
 
 	global $wpdb;

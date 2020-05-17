@@ -11,12 +11,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 The plugin contains the leaks test package: 
 - DNS leak test
-- WEB rtc IP leak test
+- WEBrtc IP leak test
 - Email IP leak test
 
-You can integrate these tests into your website.
-
-The VPN leaks test
+The plugin integrates with https://bash.ws, a 3rd party service, to have it do the testing.
+The plugin essentially makes a remote request (POST) to a service URL, passing an user IP address as a parameter.
+The service is free to use and does not require an API key and/or registration, see here terms of use https://bash.ws/terms
 
 == Installation ==
 

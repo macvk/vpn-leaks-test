@@ -9,6 +9,13 @@ register_activation_hook( VLTP_FILE, 'vltp_activation' );
 add_action( 'admin_enqueue_scripts', 'vltp_admin_media_files' );
 add_action( 'wp_ajax_vltp_get_progress_image', 'vltp_get_progress_image' );
 
+/**
+ * Process ajax request
+ *
+ * Gets the progress image from the library
+ *
+ * @return null
+*/
 function vltp_get_progress_image() {
 	if (isset($_REQUEST['id']) ){
 		$image = wp_get_attachment_image( filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ), 'medium', false, array( 'id' => 'vltp_progress_image_preview' ) );
@@ -22,6 +29,13 @@ function vltp_get_progress_image() {
 	}
 }
 
+/**
+ * Attaches the media files to the WP admin interface
+ *
+ * @param string $page the page ID
+ *
+ * @return null
+*/
 function vltp_admin_media_files( $page ) {
 
 	if( strpos($page, 'vltp-admin-page') === false ) {
@@ -37,12 +51,18 @@ function vltp_admin_media_files( $page ) {
 	wp_enqueue_style( 'vltp-admin.css' );
 }
 
+/**
+ * Admin initialization hook
+ */
 function vltp_admin_init()  {
 	add_action( 'admin_menu', 'vltp_admin_menu' );
 	wp_register_style( 'vltp-admin.css', plugin_dir_url( __FILE__ ) . '/include/vltp-admin.css' );
 	wp_register_script( 'vltp-admin-script', plugins_url( 'include/vltp-admin.js' , __FILE__ ), array('jquery'), '0.1' );
 }
 
+/**
+ * Admin menu
+ */
 function vltp_admin_menu()  {
 	$hook = add_options_page( __( 'VPN leaks test', 'vpn-leaks-test' ), __( 'VPN leaks test', 'vpn-leaks-test' ),  'manage_options', 'vltp-admin-page',  'vltp_admin_page');
 	
@@ -51,7 +71,11 @@ function vltp_admin_menu()  {
 	}
 }
 
+/**
+ * Activation hook
+ */
 function vltp_activation() {
+
 	global $wpdb;
 	
 	$sql = 'CREATE TABLE '.$wpdb->prefix.'vltp (
@@ -66,6 +90,9 @@ function vltp_activation() {
 	register_uninstall_hook( VLTP_FILE, 'vltp_uninstall' );
 }
 
+/**
+ * Uninstall hook
+ */
 function vltp_uninstall() {
 	global $wpdb;
 	

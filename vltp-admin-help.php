@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Add help to the VPN leaks test admin page
+ *
+ * @return null
+ */
 function vltp_admin_help()
 {
 	$current_screen = get_current_screen();
