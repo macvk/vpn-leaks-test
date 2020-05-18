@@ -329,7 +329,7 @@ function vltp_test_email_check() {
 	$response = wp_remote_post( esc_url_raw( $url ), $data );
 	
 	if ( !is_wp_error( $response ) ) {
-		echo $response;
+		echo wp_remote_retrieve_body( $response );
 	}
 	die();
 }
