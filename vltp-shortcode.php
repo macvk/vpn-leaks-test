@@ -155,7 +155,7 @@ function vltp_test_result( $row ) {
 	 *
 	 * @return array $results { 
 	 * 
-	 *     @type string $type         The result type: "dns" - DNS leak test, "webrtc" - WebRtc test, "email" - Email test, "conclusion" - test conclusion, "info" - additional information
+	 *     @type string $type         The result type: "dns" - DNS leak test, "webrtc" - WebRtc test, "email" - Email test, "conclusion" - test conclusion
 	 *     @type string $ip           IP address
 	 *     @type int    $country      Country code of IP address 
 	 *     @type string $country_name Country name of IP address
