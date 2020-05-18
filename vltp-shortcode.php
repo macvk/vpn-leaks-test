@@ -149,13 +149,13 @@ function vltp_test_result( $row ) {
 	$data = array('ip' => $ip);
 
 	/**
-	 * Receives JSON object from the 3rd party service bash.ws
+	 * Receives array of JSON objects from the 3rd party service bash.ws
 	 *
 	 * @param string $ip The user IP address
 	 *
 	 * @return array $results { 
 	 * 
-	 *     @type string $type         The item type (dns, webrtc, email, ip, conclusion, info)
+	 *     @type string $type         The result type: "dns" - DNS leak test, "webrtc" - WebRtc test, "email" - Email test, "conclusion" - test conclusion, "info" - additional information
 	 *     @type string $ip           IP address
 	 *     @type int    $country      Country code of IP address 
 	 *     @type string $country_name Country name of IP address
@@ -180,7 +180,7 @@ function vltp_test_result( $row ) {
 
 		$total  = 0;
 		foreach ($results as $k=>$v) {
-
+		
 			if ( !isset( $v['type'] ) ) {
 				continue;
 			}
@@ -257,18 +257,17 @@ function vltp_test_result( $row ) {
 		}
 		$content .= '</div>';
 		$content .= '<div class="vltp-conclusion">';
-
 		
 		foreach ( $results as $k=>$v ) {
 		
 			if ( !isset( $v['type'] ) ) {
 				continue;
 			}
-
+			
 			if ( $v['type'] != 'conclusion' ) {
 				continue;
 			}
-
+			
 			$r = array();
 			$r['%text'] = $v['ip'];
 			$content .= str_replace( array_keys($r), array_values($r), $row['vltp_conclusion'] );
