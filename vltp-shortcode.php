@@ -41,6 +41,8 @@ function vltp_shortcode($attrs) {
 	// 
 	$options = @unserialize( stripslashes( $row['vltp_options'] ) );
 	
+	// Extract the Test configuration from the database table `vltp`
+	// For fields description see file vltp_admin_page.php, function vltp_admin_page() 
 	$row['vltp_progress_image'] = isset( $options['vltp_progress_image'] ) ? stripslashes( $options['vltp_progress_image'] ) : '';
 	$row['vltp_start'] = isset( $options['vltp_start'] ) ? stripslashes( $options['vltp_start'] ) : '';
 	$row['vltp_result'] = isset( $options['vltp_result'] ) ? stripslashes( $options['vltp_result'] ) : '';
@@ -65,7 +67,7 @@ function vltp_shortcode($attrs) {
 	
 	$script_array = array( );
 	$script_array['vltp_progress_image'] = $image;
-	
+
 	$script_array['vltp_test_id'] = mt_rand( 100000000,999999999 );
 	$script_array['vltp_url'] = home_url( add_query_arg( array( 'vltp_test_id'=>$script_array['vltp_test_id'] ), $wp->request ) );
 	$script_array['vltp_ajax_url'] = admin_url( 'admin-ajax.php' );
@@ -281,7 +283,13 @@ function vltp_test_result( $row ) {
 }
 
 /**
- * Checks to see if the IP for testing was received and analyzed 
+ * Checks to see if the IP for testing was received and analyzed by the bash.ws
+ * The bash.ws sends JSON object as an answer:
+ * [{ 
+ *     'type': 'done', 
+ *     'done': '1' 
+ * }]
+ * if everything is ok the field 'done' is equal to '1', otherwise it is equal to '0'
  *
  * @return null
 */
@@ -316,7 +324,13 @@ function vltp_test_webrtc() {
 }
 
 /**
- * Checks to see if the email for testing was received and analyzed
+ * Checks to see if the Email for testing was received and analyzed by the bash.ws
+ * The bash.ws sends JSON object as an answer:
+ * [{ 
+ *     'type': 'done', 
+ *     'done': '1' 
+ * }]
+ * if everything is ok the field 'done' is equal to '1', otherwise it is equal to '0'
  *
  * @return null
 */
@@ -331,6 +345,7 @@ function vltp_test_email_check() {
 	if ( !is_wp_error( $response ) ) {
 		echo wp_remote_retrieve_body( $response );
 	}
+
 	die();
 }
 

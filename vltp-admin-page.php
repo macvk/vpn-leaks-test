@@ -40,19 +40,19 @@ function vltp_admin_page() {
 		
 		$options = array();
 		// The test frontend design customization:
-		// 1. Progress image (gif), by default vpn-leaks-test/include/ajax-loader.gif
+		// vltp_progress_image - progress image (gif), by default vpn-leaks-test/include/ajax-loader.gif
 		$options['vltp_progress_image'] = isset( $_POST['vltp_progress_image'] ) ? intval( $_POST['vltp_progress_image'] ) : 0;
-		// 2. The label of "start test" button, by default "Start test"
+		// vltp_start - the label of "start test" button, by default "Start test"
 		$options['vltp_start'] = isset( $_POST['vltp_start'] ) ? $_POST['vltp_start'] : '';
-		/* 3. Line by line HTML for the test results. The following format characters are available: 
+		/* vltp_result - line by line HTML used for formatting the test results. The following format characters are available: 
 			%ip - IP address found by the test
 			%country_code - Country code of the IP
 			%country_name - Country name of the IP
-			%asn - Unique number assigned to an autonomous system to which the IP belongs
-			%flag - The full URL to the country flag of the IP (all the flags are here: vpn-leaks-test/include/flags)
+			%asn - Asn name to which the IP belongs
+			%flag - The full URL to the country flag of the IP (all the flags are located here: vpn-leaks-test/include/flags)
 		*/
 		$options['vltp_result'] = isset( $_POST['vltp_result'] ) ? $_POST['vltp_result'] : '';
-		/* 4. Line by line HTML for the conclusion of the tests. The following format characters are available: 
+		/* vltp_conclusion - line by line HTML for the conclusion of the test results. The following format characters are available: 
 			%text - the conclusion text
 		*/
 		$options['vltp_conclusion'] = isset( $_POST['vltp_conclusion'] ) ? $_POST['vltp_conclusion'] : '';

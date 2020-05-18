@@ -14,9 +14,9 @@ The plugin contains the leaks test package:
 - WEBrtc IP leak test
 - Email IP leak test
 
-The plugin integrates with https://bash.ws, a 3rd party service, to have it do the testing.
+The plugin integrates with https://bash.ws, a 3rd party service, to have it do the VPN testing.
 The plugin essentially makes a remote request (POST) to a service URL, passing an user IP address as a parameter.
-The service is free to use and does not require an API key and/or registration, see here terms of use https://bash.ws/terms
+The service is free to use and does not require an API key and/or registration, see terms of use https://bash.ws/terms.
 
 == Installation ==
 
