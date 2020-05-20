@@ -269,8 +269,8 @@ function vltp_test_result( $row ) {
 			}
 			
 			$r = array();
-			$r['%text'] = $v['ip'];
-			$content .= str_replace( array_keys($r), array_values($r), $row['vltp_conclusion'] );
+			$r['%text'] = esc_attr( $v['ip'] );
+			$content .= str_replace( array_keys($r), array_values($r),  $row['vltp_conclusion'] );
 		}
 		$content .= '</div>';
 	}
@@ -295,8 +295,8 @@ function vltp_test_result( $row ) {
 function vltp_test_webrtc() {
 
 	$ips = isset( $_REQUEST['ips'] ) ? (array) $_REQUEST['ips'] : array();
-	$ips = array_map( 'esc_attr', $ips );
-	$ip = isset( $_REQUEST['ip'] ) ? esc_attr( $_REQUEST['ip'] ) : '';
+	$ips = array_map( 'sanitize_text_field', $ips );
+	$ip = isset( $_REQUEST['ip'] ) ? sanitize_text_field( $_REQUEST['ip'] ) : '';
 	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
 	
 	if (!$ip) {
