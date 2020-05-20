@@ -5,6 +5,7 @@ jQuery(document).ready(function(){
 	jQuery('.vltp-test .vltp-start').click(function(){
 		var o = jQuery(this);
 		var test_type = o.attr('data-type');
+		var vltp_id = parseInt(o.attr('data-id'));
 		
 		if (vpn_test_started) {
 			return;
@@ -17,20 +18,29 @@ jQuery(document).ready(function(){
 		if (test_type.localeCompare('dns') != 0 && test_type.localeCompare('email') && test_type.localeCompare('webrtc')) {
 			return;
 		}
+
+		if (!vltp_id) {
+			return;
+		}
 		
 		vpn_test_started = true;
 		
+		var vltp_settings = vltp_get_settings(vltp_id);
 		var sav_button = o.html();
-		
+
+		if (!vltp_settings) {
+			return;
+		}
+
 		image = new Image();
 		image.src = vltp_settings.vltp_progress_image;
 		
 		image.onload = function() {
-			vltp_test(o,sav_button,test_type);
+			vltp_test(o,sav_button,test_type,vltp_id);
 		};
 	
 		image.onerror = function() {
-			vltp_test(o,sav_button,test_type);
+			vltp_test(o,sav_button,test_type,vltp_id);
 		};
 		            
 		o.html(image);
@@ -38,30 +48,55 @@ jQuery(document).ready(function(){
 	});
 });
 
+function vltp_get_settings(vltp_id) {
+	var settings = window["vltp_settings_"+vltp_id];
+	
+	if (typeof settings == 'undefined' || !settings) {
+		return false;
+	}
 
-function vltp_test(o,sav_button,test_type) {
+	return settings;
+}
+
+function vltp_test(o,sav_button,test_type,vltp_id) {
+
+
 	if (test_type.localeCompare('dns') == 0) {
-		vltp_test_dns(o,sav_button,test_type);
+		vltp_test_dns(o,sav_button,test_type,vltp_id);
 	}
 
 	if (test_type.localeCompare('email') == 0) {
+
+		var vltp_settings = vltp_get_settings(vltp_id);
+
+		if (!vltp_settings) {
+			return;
+		}
+
 		o.parent().append('<div class="vltp-info">'+vltp_settings.vltp_email_message+'</div>');
-		vltp_test_email_check(o,sav_button,test_type);
+		vltp_test_email_check(o,sav_button,test_type,vltp_id);
 	}
 
 	if (test_type.localeCompare('webrtc') == 0) {
-		vltp_test_webrtc(o,sav_button,test_type);
+		vltp_test_webrtc(o,sav_button,test_type,vltp_id);
 	}
 }
 
-function vltp_test_email_check(o,sav_button,test_type) {
+function vltp_test_email_check(o,sav_button,test_type,vltp_id) {
+
+	var vltp_settings = vltp_get_settings(vltp_id);
+
+	if (!vltp_settings) {
+		return;
+	}
 
         var data = {
 		action: 'vltp_test_email_check',
 		vltp_test_id: vltp_settings.vltp_test_id
         };
-
+        
 	jQuery.ajax({url:vltp_settings.vltp_ajax_url, type:"POST", data:data, complete:function(xhr) {
+
 		var done = false;
 		try {
 			j = JSON.parse(xhr.responseText);
@@ -75,19 +110,27 @@ function vltp_test_email_check(o,sav_button,test_type) {
 		}
 		else {
 			setTimeout(function(){
-				vltp_test_email_check(o,sav_button,test_type);
+				vltp_test_email_check(o,sav_button,test_type,vltp_id);
 			},1000);
 		}
 	}});
 }
 
-function vltp_test_dns(o,sav_button,test_type) {
+function vltp_test_dns(o,sav_button,test_type,vltp_id) {
 
 	var image_count = 20;
 	var images = [];
 	var i;
-	var leak_id = vltp_settings.vltp_test_id;
 
+
+	var vltp_settings = vltp_get_settings(vltp_id);
+
+	if (!vltp_settings) {
+		return;
+	}
+
+	var test_id = vltp_settings.vltp_test_id;
+	
 	for (i=0;i<image_count;i++)
 	{
 		images.push(new Image());
@@ -98,7 +141,7 @@ function vltp_test_dns(o,sav_button,test_type) {
 	
 	for (i=0;i<image_count;i++) {
 		div.append(images[i]);
-		images[i].src = 'https://'+(i+1)+'.' +leak_id+'.bash.ws/img.png';
+		images[i].src = 'https://'+(i+1)+'.' +test_id+'.bash.ws/img.png';
 	}
 	
 	images[image_count-1].onload = function() {
@@ -111,12 +154,15 @@ function vltp_test_dns(o,sav_button,test_type) {
 	
 }
 
-function vltp_test_webrtc(o,sav_button,test_type) {
+function vltp_test_webrtc(o,sav_button,test_type,vltp_id) {
 
-	var leak_id;
 	var ips = new Array();
-	leak_id = vltp_settings.vltp_test_id;
-	
+	var vltp_settings = vltp_get_settings(vltp_id);
+
+	if (!vltp_settings) {
+		return;
+	}
+
         //insert IP addresses into the page
         try {
             getIPs(function(ip){

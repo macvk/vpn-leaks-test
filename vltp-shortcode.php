@@ -68,8 +68,8 @@ function vltp_shortcode($attrs) {
 	$script_array = array( );
 	$script_array['vltp_progress_image'] = $image;
 
-	$script_array['vltp_test_id'] = mt_rand( 100000000,999999999 );
-	$script_array['vltp_url'] = home_url( add_query_arg( array( 'vltp_test_id'=>$script_array['vltp_test_id'] ), $wp->request ) );
+	$script_array['vltp_test_id'] = mt_rand( 100000000, 999999999 );
+	$script_array['vltp_url'] = home_url( add_query_arg( array( 'vltp_test_id'=>$script_array['vltp_test_id'], 'vltp_id'=>$id ), $wp->request ) );
 	$script_array['vltp_ajax_url'] = admin_url( 'admin-ajax.php' );
 	
 	if ( $row['vltp_type'] == 'email' ) {
@@ -77,13 +77,15 @@ function vltp_shortcode($attrs) {
 		$script_array['vltp_email_message'] = sprintf( __('Please send an email to <a href="mailto:%s">%s</a>. The email subject and body doesn\'t matter. Do not refresh the page.', 'vpn-leaks-test') ,$m, $m );
 	}
 	
-	wp_localize_script( 'vltp-js', 'vltp_settings', $script_array );
+	wp_localize_script( 'vltp-js', 'vltp_settings_'.$id, $script_array );
 	
 	$content = '<div class="vltp-test">';
-	$content.= '<div class="vltp-start" data-type="'.esc_attr( $row['vltp_type'] ).'">'.$row['vltp_start'].'</div>';
+	$content.= '<div class="vltp-start" data-type="'.esc_attr( $row['vltp_type'] ).'" data-id="'.esc_attr( $id ).'">'.$row['vltp_start'].'</div>';
 
-	if ( isset( $_REQUEST['vltp_test_id'] ) ) {
+	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
+	$vltp_id = isset( $_REQUEST['vltp_id'] ) ? intval( $_REQUEST['vltp_id'] ) : 0;
 	
+	if ( $test_id && $vltp_id == $id ) {
 		$content .= vltp_test_result( $row );
 	}
 
@@ -275,7 +277,7 @@ function vltp_test_result( $row ) {
 		$content .= '</div>';
 	}
 	else {
-		$content.= '<div class="vltp-results">'.__('The Test failed, please try again...','vpn-leaks-test').'</div>';
+		$content.= '<div class="vltp-results">'.__( 'The Test failed, please try again...', 'vpn-leaks-test' ).'</div>';
 	}
 
 	return $content;	
@@ -317,12 +319,12 @@ function vltp_test_webrtc() {
 	
 	$response = wp_remote_post( esc_url_raw( $url ), array( 'body' => $data ) );
 
-
-	if ( !is_wp_error( $response ) ) {
-		echo wp_remote_retrieve_body( $response );
+	if ( is_wp_error( $response ) ) {
+		wp_send_json( array( 'done' => 0, 'error' => __( 'The internal communication error occurred...', 'vpn-leak-test') ) );
 	}
-	
-	die();
+
+	$json_data = json_decode( wp_remote_retrieve_body( $response ), true );
+	wp_send_json( $json_data );
 }
 
 /**
@@ -344,10 +346,11 @@ function vltp_test_email_check() {
 	$data = array( 'ajax' => '1' );
 	$response = wp_remote_post( esc_url_raw( $url ), array( 'body' => $data ) );
 	
-	if ( !is_wp_error( $response ) ) {
-		echo wp_remote_retrieve_body( $response );
+	if ( is_wp_error( $response ) ) {
+		wp_send_json( array( 'done' => 0, 'error' => __( 'The internal communication error occurred...', 'vpn-leak-test') ) );
 	}
-
-	die();
+	
+	$json_data = json_decode( wp_remote_retrieve_body( $response ), true );
+	wp_send_json( $json_data );
 }
 
