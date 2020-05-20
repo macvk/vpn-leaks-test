@@ -53,7 +53,7 @@ function vltp_shortcode($attrs) {
 	
 	$image = '';
 	if ( $row['vltp_progress_image'] ) {
-		$arr = wp_get_attachment_image_src( $row['vltp_progress_image'], 'medium', false );
+		$arr = wp_get_attachment_image_src( intval( $row['vltp_progress_image'] ), 'medium', false );
 		if ( isset( $arr[0] ) ) {
 			$image = $arr[0];
 		}
@@ -80,7 +80,7 @@ function vltp_shortcode($attrs) {
 	wp_localize_script( 'vltp-js', 'vltp_settings', $script_array );
 	
 	$content = '<div class="vltp-test">';
-	$content.= '<div class="vltp-start" data-type="'.$row['vltp_type'].'">'.$row['vltp_start'].'</div>';
+	$content.= '<div class="vltp-start" data-type="'.esc_attr( $row['vltp_type'] ).'">'.$row['vltp_start'].'</div>';
 
 	if ( isset( $_REQUEST['vltp_test_id'] ) ) {
 	
@@ -128,8 +128,8 @@ function vltp_test_result( $row ) {
 		return '';
 	}
 	
-	$ip = isset( $_REQUEST['ip'] ) ? $_REQUEST['ip'] : '';
-
+	$ip = isset( $_REQUEST['ip'] ) ? sanitize_text_field( $_REQUEST['ip'] ) : '';
+	
 	if (!$ip) {
 		$ip = isset( $_SERVER['HTTP_CLIENT_IP'] ) ? $_SERVER['HTTP_CLIENT_IP'] : '';
 	}
@@ -165,7 +165,7 @@ function vltp_test_result( $row ) {
 	 *
 	*/
 	
-	$response = wp_remote_post( esc_url_raw( $url.'?json' ), $data );
+	$response = wp_remote_post( esc_url_raw( $url.'?json' ), array( 'body' => $data ) );
 	
 	$results = array();
 	if ( !is_wp_error( $response ) ) {
@@ -246,13 +246,13 @@ function vltp_test_result( $row ) {
 			
 			$r = array();
 
-			$r['%country_code'] = $v['country'];
-			$r['%country_name'] = $v['country_name'];
-			$r['%asn'] = $v['asn'];
-			$r['%ip'] = $v['ip'];
-			$r['%flag'] = plugin_dir_url( __FILE__ ).'include/flags/'.$v['country'].'.png';
+			$r['%country_code'] = esc_attr( $v['country'] );
+			$r['%country_name'] = esc_attr( $v['country_name'] );
+			$r['%asn'] = esc_attr( $v['asn'] );
+			$r['%ip'] = esc_attr( $v['ip'] );
+			$r['%flag'] = plugin_dir_url( __FILE__ ).'include/flags/'.esc_attr( $v['country'] ).'.png';
 			
-			$content .= str_replace( array_keys( $r ), array_values( $r ), $row['vltp_result'] );
+			$content .=  str_replace( array_keys( $r ), array_values( $r ), $row['vltp_result'] );
 
 		}
 		$content .= '</div>';
@@ -294,8 +294,10 @@ function vltp_test_result( $row ) {
 */
 function vltp_test_webrtc() {
 
-	$ips = isset($_REQUEST['ips']) ? $_REQUEST['ips'] : array();
-	$ip = isset($_REQUEST['ip']) ? $_REQUEST['ip'] : '';
+	$ips = isset( $_REQUEST['ips'] ) ? (array) $_REQUEST['ips'] : array();
+	$ips = array_map( 'esc_attr', $ips );
+	$ip = isset( $_REQUEST['ip'] ) ? esc_attr( $_REQUEST['ip'] ) : '';
+	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
 	
 	if (!$ip) {
 		$ip = isset( $_SERVER['HTTP_CLIENT_IP'] ) ? $_SERVER['HTTP_CLIENT_IP'] : '';
@@ -309,11 +311,12 @@ function vltp_test_webrtc() {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
 	}
 	
-	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
 	$url = 'https://bash.ws/webrtc-leak-test/test/'.$test_id;
 	
 	$data = array( 'ajax' => '1', 'ips'=>$ips, 'ip'=>$ip );
-	$response = wp_remote_post( esc_url_raw( $url ), $data );
+	
+	$response = wp_remote_post( esc_url_raw( $url ), array( 'body' => $data ) );
+
 
 	if ( !is_wp_error( $response ) ) {
 		echo wp_remote_retrieve_body( $response );
@@ -339,7 +342,7 @@ function vltp_test_email_check() {
 	$url = 'https://bash.ws/email-leak-test/test/'.$test_id;
 	
 	$data = array( 'ajax' => '1' );
-	$response = wp_remote_post( esc_url_raw( $url ), $data );
+	$response = wp_remote_post( esc_url_raw( $url ), array( 'body' => $data ) );
 	
 	if ( !is_wp_error( $response ) ) {
 		echo wp_remote_retrieve_body( $response );
