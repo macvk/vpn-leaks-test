@@ -10,6 +10,10 @@ Author URI: https://github.com/macvk
 License: GPLv2 or later
 */
 
+if ( !defined( 'ABSPATH' ) ) {
+	die( 'An attempt to call the vltp plugin directly...' );
+}
+
 define('VLTP_NONCE','vpn-leaks-nonce');
 define('VLTP_FILE',__FILE__);
 

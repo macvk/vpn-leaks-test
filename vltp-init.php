@@ -1,5 +1,9 @@
 <?php
 
+if ( !defined( 'ABSPATH' ) ) {
+	die( 'An attempt to call the vltp plugin directly...' );
+}
+
 include dirname(__FILE__).'/vltp-shortcode.php';
 
 add_action( 'init', 'vltp_init');

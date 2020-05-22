@@ -1,5 +1,10 @@
 <?php
 
+
+if ( !defined( 'ABSPATH' ) ) {
+	die( 'An attempt to call the vltp plugin directly...' );
+}
+
 add_action( 'init', 'vltp_admin_init' );
 
 include dirname(__FILE__).'/vltp-admin-page.php';

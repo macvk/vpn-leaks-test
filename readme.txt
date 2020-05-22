@@ -2,8 +2,9 @@
 Contributors: macvk
 Tags: security,admin
 Requires at least: 4.7
+Requires PHP: 5.4
 Tested up to: 5.4
-Stable tag: 1.0.0
+Stable tag: 1.0.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +32,6 @@ Depending on the test the following additional data are received by the service:
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.0.0.0 =
 Initial version
 
