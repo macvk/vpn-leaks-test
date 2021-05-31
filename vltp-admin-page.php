@@ -240,6 +240,7 @@ function vltp_test_type_name( $type ) {
 	$names['dns'] = 'DNS Leak Test';
 	$names['email'] = 'Email IP Leak Test';
 	$names['webrtc'] = 'WebRTC Leak Test';
+	$names['torrent'] = 'Torrent Leak Test';
 	
 	return isset( $names[ $type ] ) ? $names[ $type ] : '';
 }
@@ -291,7 +292,7 @@ function vltp_admin_page_edit( $id, $row ) {
 	
 	$type_select = '<select id="vltp_type" name="vltp_type">';
 	
-	$types = array( 'dns'=>'DNS leak test', 'webrtc'=>'WebRTC leak test', 'email'=>'Email IP leak test' );
+	$types = array( 'dns'=>'DNS leak test', 'webrtc'=>'WebRTC leak test', 'email'=>'Email IP leak test', 'torrent'=>'Torrent IP leak test' );
 	
 	foreach ( $types as $k=>$v ) {
 	

@@ -2,7 +2,7 @@
 
 
 if ( !defined( 'ABSPATH' ) ) {
-	die( 'An attempt to call the vltp plugin directly...' );
+	die( 'An attempt to call the plugin directly...' );
 }
 
 add_action( 'init', 'vltp_admin_init' );

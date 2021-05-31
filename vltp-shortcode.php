@@ -32,7 +32,7 @@ function vltp_shortcode($attrs) {
 		return '';
 	}
 	
-	if ( !in_array( $row['vltp_type'], array( 'dns', 'email', 'webrtc' ) ) ) {
+	if ( !in_array( $row['vltp_type'], array( 'dns', 'email', 'webrtc', 'torrent' ) ) ) {
 		return '';
 	}
 	
@@ -75,6 +75,11 @@ function vltp_shortcode($attrs) {
 	if ( $row['vltp_type'] == 'email' ) {
 		$m = $script_array['vltp_test_id'].'@bash.ws';
 		$script_array['vltp_email_message'] = sprintf( __('Please send an email to <a href="mailto:%s">%s</a>. The email subject and body doesn\'t matter. Do not refresh the page.', 'vpn-leaks-test') ,$m, $m );
+	}
+
+	if ( $row['vltp_type'] == 'torrent' ) {
+		$m = 'https://bash.ws/torrent/'.$script_array['vltp_test_id'];
+		$script_array['vltp_torrent_message'] = sprintf( __('Please download the torrent <a href="%s">%s.torrent</a>. Do not refresh the page.', 'vpn-leaks-test') ,$m, $script_array['vltp_test_id'] );
 	}
 	
 	wp_localize_script( 'vltp-js', 'vltp_settings_'.$id, $script_array );
@@ -125,6 +130,9 @@ function vltp_test_result( $row ) {
 	}
 	else if ($row['vltp_type'] == 'webrtc') {
 		$url = 'https://bash.ws/webrtc-leak-test/test/'.$test_id;
+	}
+	else if ($row['vltp_type'] == 'torrent') {
+		$url = 'https://bash.ws/torrent-leak-test/test/'.$test_id;
 	}
 	else {
 		return '';
@@ -202,6 +210,11 @@ function vltp_test_result( $row ) {
 					continue;
 				}
 			}
+			else if ($row['vltp_type'] == 'torrent') {
+				if ($v['type'] != 'torrent') {
+					continue;
+				}
+			}
 			$total ++;
 		}
 
@@ -216,9 +229,14 @@ function vltp_test_result( $row ) {
 		else if ( $row['vltp_type'] == 'webrtc' ) {
 			$content .= sprintf( _n( 'WebRTC is able to see %d IP', 'WebRTC is able to see %d IPs', $total, 'vpn-leaks-test' ), $total );
 		}
+		else if ( $row['vltp_type'] == 'torrent' ) {
+			$content .= sprintf( _n('Your torrent application shares %d IP', 'Your torrent application shares %d IPs', $total, 'vpn-leaks-test'), $total );
+		}
 
 		$content .= '</div>';
 		$content .= '<div class="vltp-results">';
+
+
 
 		foreach ( $results as $k=>$v ) {
 		
@@ -229,7 +247,7 @@ function vltp_test_result( $row ) {
 					continue;
 				}
 			}
-		
+
 			if ( $row['vltp_type'] == 'dns' ) {
 				if ( $v['type'] != 'dns' ) {
 					continue;
@@ -245,6 +263,11 @@ function vltp_test_result( $row ) {
 					continue;
 				}
 			}
+			else if ( $row['vltp_type'] == 'torrent' ) {
+				if ( $v['type'] != 'torrent' ) {
+					continue;
+				}
+			}
 			
 			$r = array();
 
@@ -256,10 +279,13 @@ function vltp_test_result( $row ) {
 			
 			$content .=  str_replace( array_keys( $r ), array_values( $r ), $row['vltp_result'] );
 
+
 		}
 		$content .= '</div>';
 		$content .= '<div class="vltp-conclusion">';
-		
+
+
+
 		foreach ( $results as $k=>$v ) {
 		
 			if ( !isset( $v['type'] ) ) {
@@ -354,3 +380,30 @@ function vltp_test_email_check() {
 	wp_send_json( $json_data );
 }
 
+
+/**
+ * Checks to see if the Torrent for testing downloaded and analyzed by the bash.ws
+ * The bash.ws sends JSON object as an answer:
+ * [{ 
+ *     'type': 'done', 
+ *     'done': '1' 
+ * }]
+ * if everything is ok the field 'done' is equal to '1', otherwise it is equal to '0'
+ *
+ * @return null
+*/
+function vltp_test_torrent_check() {
+
+	$test_id = isset( $_REQUEST['vltp_test_id'] ) ? intval( $_REQUEST['vltp_test_id'] ) : 0;
+	$url = 'https://bash.ws/torrent-leak-test/test/'.$test_id;
+	
+	$data = array( 'ajax' => '1' );
+	$response = wp_remote_post( esc_url_raw( $url ), array( 'body' => $data ) );
+	
+	if ( is_wp_error( $response ) ) {
+		wp_send_json( array( 'done' => 0, 'error' => __( 'The internal communication error occurred...', 'vpn-leak-test') ) );
+	}
+	
+	$json_data = json_decode( wp_remote_retrieve_body( $response ), true );
+	wp_send_json( $json_data );
+}

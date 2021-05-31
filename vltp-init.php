@@ -1,7 +1,7 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	die( 'An attempt to call the vltp plugin directly...' );
+	die( 'An attempt to call the plugin directly...' );
 }
 
 include dirname(__FILE__).'/vltp-shortcode.php';
@@ -10,6 +10,9 @@ add_action( 'init', 'vltp_init');
 
 add_action( 'wp_ajax_nopriv_vltp_test_email_check', 'vltp_test_email_check' );
 add_action( 'wp_ajax_vltp_test_email_check', 'vltp_test_email_check' );
+
+add_action( 'wp_ajax_nopriv_vltp_test_torrent_check', 'vltp_test_torrent_check' );
+add_action( 'wp_ajax_vltp_test_torrent_check', 'vltp_test_torrent_check' );
 
 add_action( 'wp_ajax_nopriv_vltp_test_webrtc', 'vltp_test_webrtc' );
 add_action( 'wp_ajax_vltp_test_webrtc', 'vltp_test_webrtc' );

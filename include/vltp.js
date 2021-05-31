@@ -15,7 +15,7 @@ jQuery(document).ready(function(){
 			return;
 		}
 		
-		if (test_type.localeCompare('dns') != 0 && test_type.localeCompare('email') && test_type.localeCompare('webrtc')) {
+		if (test_type.localeCompare('dns') != 0 && test_type.localeCompare('email') != 0 && test_type.localeCompare('webrtc') != 0 && test_type.localeCompare('torrent') != 0) {
 			return;
 		}
 
@@ -77,6 +77,18 @@ function vltp_test(o,sav_button,test_type,vltp_id) {
 		vltp_test_email_check(o,sav_button,test_type,vltp_id);
 	}
 
+	if (test_type.localeCompare('torrent') == 0) {
+
+		var vltp_settings = vltp_get_settings(vltp_id);
+
+		if (!vltp_settings) {
+			return;
+		}
+
+		o.parent().append('<div class="vltp-info">'+vltp_settings.vltp_torrent_message+'</div>');
+		vltp_test_torrent_check(o,sav_button,test_type,vltp_id);
+	}
+
 	if (test_type.localeCompare('webrtc') == 0) {
 		vltp_test_webrtc(o,sav_button,test_type,vltp_id);
 	}
@@ -111,6 +123,40 @@ function vltp_test_email_check(o,sav_button,test_type,vltp_id) {
 		else {
 			setTimeout(function(){
 				vltp_test_email_check(o,sav_button,test_type,vltp_id);
+			},1000);
+		}
+	}});
+}
+
+function vltp_test_torrent_check(o,sav_button,test_type,vltp_id) {
+
+	var vltp_settings = vltp_get_settings(vltp_id);
+
+	if (!vltp_settings) {
+		return;
+	}
+
+        var data = {
+		action: 'vltp_test_torrent_check',
+		vltp_test_id: vltp_settings.vltp_test_id
+        };
+        
+	jQuery.ajax({url:vltp_settings.vltp_ajax_url, type:"POST", data:data, complete:function(xhr) {
+
+		var done = false;
+		try {
+			j = JSON.parse(xhr.responseText);
+			done = parseInt(j.done);
+		}
+		catch (e) {
+		}
+		
+		if (done) {
+			document.location = vltp_settings.vltp_url;
+		}
+		else {
+			setTimeout(function(){
+				vltp_test_torrent_check(o,sav_button,test_type,vltp_id);
 			},1000);
 		}
 	}});
@@ -171,7 +217,7 @@ function vltp_test_webrtc(o,sav_button,test_type,vltp_id) {
 			return;
 
 		ips.push(ip);
-                
+
             });
         }
         catch (error)
